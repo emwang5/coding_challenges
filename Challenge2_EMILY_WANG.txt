@@ -1,0 +1,39 @@
+a) Describe an algorithm to solve this problem.
+
+Read in File1 line-by-line. Find the index of the first space in each line, and split the line on that space. Create a dictionary where the key is the unique identifier (part of line preceding the first space), and the value is the space-delimited fields following the space. Do the same for the information contained in File2. Iterate over the dictionary entries of the shorter file, and test whether each key is present in the dictionary of the other file. If this is the case, create a string concatenating the unique identifier, and its value in each dictionary. Append this string to a list.
+  
+b) Write pseudo-code for your algorithm.
+
+output=[] //Empty list
+dict1={}; //Empty dictionary
+dict2={}; //Empty dictionary
+file1_lines= ???? //List of strings, where each string is a line in file1. Reading file depends on language.
+file2_lines= ???? //List of strings, where each string is a line in file2.
+
+if (file 1 is longer than file2){
+	temp=file1_lines;
+	file1_lines=file2_lines;
+	file2_lines=temp;
+}
+for (i=0;i<file1_lines.length;i++){
+	splitted=file1_lines[i].split(file1_lines[i].indexOf("")); //Split line into key and value
+	dict1.addEntry(splitted[0],splitted[1]); //Add key, value
+}
+for (i=0;i<file2_lines.length;i++){
+	splitted=file2_lines[i].split(file2_lines[i].indexOf("")); //Split line into key and value
+	dict2.addEntry(splitted[0],splitted[1]); //Add key, value
+}
+for key,value in file1_dict{
+	if dict2.hasKey(key){
+		output.append(key+value+dict2[key]);
+	}
+}
+return output
+
+
+c) What are the pros and cons to your approach?  What computational limitations might force you to do something differently, and what would that be?  
+
+PROS: Simple to understand, all components of the file (unique ID and fields) are accessible if needed
+CONS: Could be more efficient, relies on the language having a dictionary object/data structure
+
+If the language being used did not have a dictionary data structure, I would create linked lists of keys and values for each file (or 4 arrays total if linked lists are not available). Then, I would iterate over the keys of the shorter file and see if they are present in the second list of keys. If this is true, I would concatenate the value at the index of the key in file1 with the value at the index of the key in file2. This is slower than referencing the value directly using key, which is the advantage of a dictionary data structure, as is present in Python and C#, among other languages.

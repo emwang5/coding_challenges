@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+p.longword {
+    width: 6in; 
+    border: 1px solid #000000;
+    word-wrap: break-word;
+}
+div.pretty{
+	margin: auto;
+	max-width: 6in;
+}
+</style>
+</head>
+<body style="pretty">
+<div class="pretty">
+<h1>Welcome to the Number Mapper!</h1>
+<p>Please enter a 10-20 digit number sequence below. It will be converted into a set of directions to help you find your way back to your original sequence.</p>
+<table>
+	<tr>Keyboard Layout <select id="layout">
+  <option value="numeric">Numeric keypad</option>
+  <option value="telephone">Telephone keypad</option>
+</select></tr>
+	<tr>
+		<td valign=top>Your Sequence:</td><td valign=top>Your Number Map:</td>
+	</tr>
+	<tr>
+		<td valign=top><input id="NUM_SEQ" maxlength="20" type="text" /></td><td valign=top><textarea id="NUM_MAP" style="background-color: lightgray;" readonly="readonly"></textarea></td>
+	</tr>
+</table>
+&nbsp;
+<button onclick="convert()">Convert my number!</button>  <button>Clear Inputs</button>
+<h2>How to Use the Number Mapper</h2>
+<p>The Number Map is a set of directions telling you how to get from number to number in your sequence on a number pad. The starting position is "0". The map begins by telling you 
+how many keys to move up/down and how many keys to move left/right to get to the first number in the sequence. Then, it proceeds to tell you the directions to the next number in 
+the sequence, and the numbers after that as well. It can be thought of as driving directions, with each number in the sequence being a stop on the trip. For reference, the 
+Number Mapper uses the layout of either a standard numeric keypad or a telephone keypad for its mapping process. Both are shown below.</p>
+<table>
+<tr><th>Numeric keypad</th><th>Telephone keypad</th></tr>
+<tr><td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Numpad.svg/330px-Numpad.svg.png"></td><td><img src="https://i.stack.imgur.com/mhJ3f.png"></td></tr>
+</table>
+<p>Note: Number Mapper assumes that the key is only directly below the "2" key and not below the "1" key, for the numeric keypad layout.</p>
+<h4>Example Output Interpretation</h4>
+<p>Let's say, for example, you have the following number map: </p>
+<p class="longword">NUp1Right1ThenUp0Left2ThenUp1Right0ThenDown1Right0ThenUp1Right1ThenUp1Right1ThenDown2Left1ThenUp1Right1ThenUp0Left1ThenDown1Right1Then</p>
+<p>To decode the Number Map, start with your finger on "0" and move up 1 key and right 1 key. You should be at "3". From "3", the next number is in the same row, but left 2 keys. You should be at "1". Then, move up 1 but stay in the same column. You should be at "4". Continue this process until the end of the map.</p>
+<p>Answer: <button id="ans" onclick="reveal()">Click Here to Reveal</button></p>
+
+<script>
+function convert(){
+input=document.getElementById("NUM_SEQ").value;
+last=0; //previous number in sequence
+output="";
+layout=document.getElementById("layout").value //Indicates whether using numeric or telephone keypad.
+if (layout=="numeric"){
+output+="N"; //Adds numeric indicator to map
+coords=[[0,1],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2],[3,0],[3,1],[3,2]]; //row,column indices/coordinates on numeric keypad.
+}else if(layout=="telephone"){
+output+="T"; //Adds telephone indicator to map
+coords=[[0,1],[3,0],[3,1],[3,2],[2,0],[2,1],[2,2],[1,0],[1,1],[1,2]]; //coordinates for numbers on telephone keypad
+}else{
+alert("Please select a keypad layout to use.");
+};
+if (input.length>=10 && input.length<=20 && /^\d+$/.test(input)){ //Tests for length of input, and numeric type.
+	for (var i = 0; i < input.length; i++) { //Iterate over each digit
+	  cur=parseInt(input.charAt(i));
+	  output+=shift(coords[last],coords[cur]); //Calculate the directions from the last key to the current one, and adds to output.
+	  last=cur; //Update the last key to be the current key
+	};
+	document.getElementById("NUM_MAP").value=output;
+}else{
+	alert("Please enter a number sequence containing 10-20 digits.") // Input is either wrong length or non-numeric.
+};
+};
+function shift(a,b){ //Takes in 2 coordinates, and returns string containing directions from point a to point b.
+vert=b[0]-a[0]; //Vertical shift
+ho=b[1]-a[1]; //Horizontal shift
+output="";
+if (vert>=0){ //Move UP (or don't move)
+output+=("Up"+vert);
+}else{ //Move DOWN
+output+=("Down" + Math.abs(vert));
+};
+if (ho>=0){ //Move RIGHT (or don't move)
+output+=("Right"+ho);
+}else{ //Move LEFT
+output+=("Left" + Math.abs(ho));
+};
+return output+"Then" //Return output and indicate the end of this set of directions.
+};
+
+function reveal(){
+	document.getElementById("ans").innerHTML="3141592653"; //Reveal answer for practice
+}
+
+</script>
+</div>
+</body>
+</html>
